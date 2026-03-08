@@ -1415,11 +1415,23 @@
                 return;
             }
 
-            const data = {
+            // 根据平台使用正确的字段名
+            let data = {
                 platform: platform,
-                name: name,
-                url: sourceId
+                name: name
             };
+
+            if (platform === 'bilibili') {
+                data.uid = sourceId;
+            } else if (platform === 'rss') {
+                data.url = sourceId;
+            } else if (platform === 'wechat') {
+                data.account = sourceId;
+            } else if (platform === 'zhihu') {
+                data.user_id = sourceId;
+            } else if (platform === 'xiaohongshu') {
+                data.user_id = sourceId;
+            }
 
             try {
                 const res = await fetch('/api/sources/add', {
@@ -1427,6 +1439,11 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
+
+                if (!res.ok) {
+                    throw new Error('服务器错误: ' + res.status);
+                }
+
                 const result = await res.json();
 
                 if (result.success) {
