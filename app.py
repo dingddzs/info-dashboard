@@ -86,6 +86,11 @@ class DashboardHandler(BaseHTTPRequestHandler):
             self.handle_delete_todo()
         elif path == '/api/reminders/ignore':
             self.handle_ignore_reminder()
+        # 同步API - 供Render调用
+        elif path == '/api/sync/contact':
+            self.handle_sync_contact()
+        elif path == '/api/sync/source':
+            self.handle_sync_source()
         else:
             self.send_error(404)
 
@@ -355,6 +360,34 @@ class DashboardHandler(BaseHTTPRequestHandler):
 
         ignore_reminder(reminder_type, contact_id=contact_id, todo_id=todo_id, year=year)
         self.send_json({'success': True})
+
+    # ========== 同步API ==========
+
+    def handle_sync_contact(self):
+        """同步联系人到本地数据库"""
+        data = self.read_json_body()
+        try:
+            store = ContactStore()
+            contact_id = store.add_contact(
+                name=data['name'],
+                gender=data.get('gender'),
+                birthday=data.get('birthday'),
+                identity=data.get('identity'),
+                important_info=data.get('important_info')
+            )
+            self.send_json({'success': True, 'local_id': contact_id})
+        except Exception as e:
+            self.send_json({'success': False, 'error': str(e)})
+
+    def handle_sync_source(self):
+        """同步信源到本地数据库"""
+        data = self.read_json_body()
+        try:
+            from config_manager import add_source
+            add_source(data)
+            self.send_json({'success': True})
+        except Exception as e:
+            self.send_json({'success': False, 'error': str(e)})
 
     # ========== 静态文件服务 ==========
 
