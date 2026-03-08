@@ -143,6 +143,7 @@ class ContentStore:
         cursor = conn.cursor()
         today = date.today().isoformat()
 
+        # 只返回今天的更新，不是今天的数据不显示
         cursor.execute("""
             SELECT id, source_id, platform, title, url, content, summary, published_at
             FROM updates
