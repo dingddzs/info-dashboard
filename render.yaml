@@ -1,0 +1,2 @@
+# Render 部署配置
+web: python app.py
