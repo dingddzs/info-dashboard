@@ -731,14 +731,69 @@
         }
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
             .main-content { margin-left: 0; padding: 20px; }
             .stat-card { flex: 1 1 100%; }
+            .menu-btn { display: flex; }
+        }
+
+        /* 菜单按钮 */
+        .menu-btn {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 99;
+            width: 44px;
+            height: 44px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 20px;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .menu-btn:hover {
+            background: var(--accent-cyan);
+            color: white;
+        }
+
+        /* 遮罩层 */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 50;
+        }
+        .overlay.active { display: block; }
+
+        /* 侧边栏默认收起（桌面端） */
+        @media (min-width: 769px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .main-content.sidebar-active { margin-left: 260px; }
         }
     </style>
 </head>
 <body>
     <div class="bg-animation"></div>
     <div class="grid-overlay"></div>
+
+    <!-- 菜单按钮 -->
+    <button class="menu-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- 遮罩层 -->
+    <div class="overlay" onclick="toggleSidebar()"></div>
 
     <!-- 侧边栏 -->
     <aside class="sidebar">
@@ -750,19 +805,19 @@
         </div>
 
         <nav>
-            <a href="#" class="nav-item active" onclick="showPage('home')">
+            <a href="#" class="nav-item active" onclick="showPage('home'); navClick()">
                 <i class="fas fa-home"></i>
                 <span>首页</span>
             </a>
-            <a href="#" class="nav-item" onclick="showPage('sources')">
+            <a href="#" class="nav-item" onclick="showPage('sources'); navClick()">
                 <i class="fas fa-rss"></i>
                 <span>信源管理</span>
             </a>
-            <a href="#" class="nav-item" onclick="showPage('contacts')">
+            <a href="#" class="nav-item" onclick="showPage('contacts'); navClick()">
                 <i class="fas fa-address-book"></i>
                 <span>人脉管理</span>
             </a>
-            <a href="#" class="nav-item" onclick="showPage('settings')">
+            <a href="#" class="nav-item" onclick="showPage('settings'); navClick()">
                 <i class="fas fa-cog"></i>
                 <span>设置</span>
             </a>
@@ -784,7 +839,7 @@
                         <i class="fas fa-sync-alt"></i>
                         刷新
                     </button>
-                    <button class="btn btn-primary" onclick="showPage('sources')">
+                    <button class="btn btn-primary" onclick="showPage('sources'); navClick()">
                         <i class="fas fa-plus"></i>
                         添加信源
                     </button>
@@ -866,7 +921,7 @@
 
         <!-- 信源管理页 -->
         <div id="sources-page" class="source-page">
-            <div class="back-btn" onclick="showPage('home')">
+            <div class="back-btn" onclick="showPage('home'); navClick()">
                 <i class="fas fa-arrow-left"></i>
                 返回首页
             </div>
@@ -892,7 +947,7 @@
 
         <!-- 人脉管理页 -->
         <div id="contacts-page" class="source-page">
-            <div class="back-btn" onclick="showPage('home')">
+            <div class="back-btn" onclick="showPage('home'); navClick()">
                 <i class="fas fa-arrow-left"></i>
                 返回首页
             </div>
@@ -974,7 +1029,7 @@
 
         <!-- 设置页 -->
         <div id="settings-page" class="source-page">
-            <div class="back-btn" onclick="showPage('home')">
+            <div class="back-btn" onclick="showPage('home'); navClick()">
                 <i class="fas fa-arrow-left"></i>
                 返回首页
             </div>
@@ -1080,6 +1135,20 @@
             });
             const activeCard = document.querySelector(`.theme-card:nth-child(${themes.findIndex(t => t.id === currentTheme) + 1})`);
             if (activeCard) activeCard.classList.add('active');
+        }
+
+        // 侧边栏切换
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('active');
+            document.querySelector('.overlay').classList.toggle('active');
+            document.querySelector('.main-content').classList.toggle('sidebar-active');
+        }
+
+        // 点击导航项后关闭侧边栏（移动端）
+        function navClick() {
+            if (window.innerWidth < 769) {
+                toggleSidebar();
+            }
         }
 
         // 页面切换
