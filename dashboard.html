@@ -526,6 +526,23 @@
             gap: 14px;
             margin-bottom: 16px;
         }
+        .btn-delete {
+            margin-left: auto;
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255, 100, 100, 0.2);
+            color: #ff6b6b;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        .btn-delete:hover {
+            background: #ff6b6b;
+            color: white;
+        }
+        }
         .source-card-icon {
             width: 48px; height: 48px;
             border-radius: 12px;
@@ -839,10 +856,6 @@
                         <i class="fas fa-sync-alt"></i>
                         刷新
                     </button>
-                    <button class="btn btn-primary" onclick="showPage('sources'); navClick()">
-                        <i class="fas fa-plus"></i>
-                        添加信源
-                    </button>
                 </div>
             </header>
 
@@ -931,7 +944,7 @@
                     <p>管理你的信息订阅源</p>
                 </div>
                 <div class="header-actions">
-                    <button class="btn btn-primary">
+                    <button class="btn btn-primary" onclick="showAddSourceModal()">
                         <i class="fas fa-plus"></i>
                         添加信源
                     </button>
@@ -1023,6 +1036,40 @@
                 </div>
                 <div class="modal-body" id="contactDetailContent">
                     <!-- 动态加载 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 添加信源弹窗 -->
+        <div class="modal" id="addSourceModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span>添加信源</span>
+                    <span onclick="hideAddSourceModal()" style="cursor:pointer;">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>平台</label>
+                        <select id="sourcePlatform" onchange="updateSourceFields()">
+                            <option value="bilibili">B站</option>
+                            <option value="rss">RSS博客</option>
+                            <option value="xiaohongshu">小红书</option>
+                            <option value="zhihu">知乎</option>
+                            <option value="wechat">微信公众号</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>名称</label>
+                        <input type="text" id="sourceName" placeholder="给信源起个名字">
+                    </div>
+                    <div class="form-group" id="sourceIdGroup">
+                        <label id="sourceIdLabel">UID/BV号/URL</label>
+                        <input type="text" id="sourceId" placeholder="输入对应ID或链接">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="hideAddSourceModal()">取消</button>
+                    <button class="btn btn-primary" onclick="addSource()">添加</button>
                 </div>
             </div>
         </div>
@@ -1328,6 +1375,99 @@
             }
         }
 
+        // ========== 信源管理 ==========
+        function showAddSourceModal() {
+            document.getElementById('addSourceModal').classList.add('active');
+            document.getElementById('sourceName').value = '';
+            document.getElementById('sourceId').value = '';
+            updateSourceFields();
+        }
+
+        function hideAddSourceModal() {
+            document.getElementById('addSourceModal').classList.remove('active');
+        }
+
+        function updateSourceFields() {
+            const platform = document.getElementById('sourcePlatform').value;
+            const labelEl = document.getElementById('sourceIdLabel');
+            const placeholderEl = document.getElementById('sourceId');
+
+            const fieldConfig = {
+                'bilibili': { label: 'B站UID', placeholder: '输入B站用户UID' },
+                'rss': { label: 'RSS地址', placeholder: '输入RSS订阅地址' },
+                'xiaohongshu': { label: '小红书用户ID', placeholder: '输入小红书用户名' },
+                'zhihu': { label: '知乎用户ID', placeholder: '输入知乎用户名' },
+                'wechat': { label: '微信公众号ID', placeholder: '输入微信公众号ID' }
+            };
+
+            const config = fieldConfig[platform] || { label: 'ID/URL', placeholder: '输入ID或URL' };
+            labelEl.textContent = config.label;
+            placeholderEl.placeholder = config.placeholder;
+        }
+
+        async function addSource() {
+            const platform = document.getElementById('sourcePlatform').value;
+            const name = document.getElementById('sourceName').value.trim();
+            const sourceId = document.getElementById('sourceId').value.trim();
+
+            if (!name || !sourceId) {
+                alert('请填写完整信息');
+                return;
+            }
+
+            const data = {
+                platform: platform,
+                name: name,
+                url: sourceId
+            };
+
+            try {
+                const res = await fetch('/api/sources/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+
+                if (result.success) {
+                    hideAddSourceModal();
+                    loadSourcesPage();
+                } else {
+                    alert('添加失败: ' + (result.error || '未知错误'));
+                }
+            } catch (e) {
+                alert('添加失败: ' + e);
+            }
+        }
+
+        async function deleteSource(sourceId) {
+            if (!confirm('确定删除该信源？')) return;
+
+            try {
+                await fetch('/api/sources/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: sourceId })
+                });
+                loadSourcesPage();
+            } catch (e) {
+                alert('删除失败: ' + e);
+            }
+        }
+
+        async function toggleSource(sourceId) {
+            try {
+                const res = await fetch('/api/sources/toggle', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: sourceId, enabled: true })
+                });
+                loadSourcesPage();
+            } catch (e) {
+                console.error('切换失败:', e);
+            }
+        }
+
         // ========== 人脉管理 ==========
         async function loadContacts() {
             try {
@@ -1524,15 +1664,16 @@
                     const icon = platformIcons[s.platform] || '📄';
                     const stats = sourceStats[s.id] || { total: 0, today: 0 };
                     return `
-                        <div class="source-card" onclick="toggleSourceHistory('${s.id}', this)">
+                        <div class="source-card">
                             <div class="source-card-header">
                                 <div class="source-card-icon">${icon}</div>
                                 <div class="source-card-info">
                                     <div class="source-card-name">${s.name}</div>
                                     <div class="source-card-platform">${platformNames[s.platform] || s.platform}</div>
                                 </div>
+                                <button class="btn-delete" onclick="event.stopPropagation(); deleteSource('${s.id}')" title="删除">✕</button>
                             </div>
-                            <div class="source-card-stats">
+                            <div class="source-card-stats" onclick="toggleSourceHistory('${s.id}')">
                                 <div class="source-card-stat">
                                     <div class="source-card-stat-value">${stats.total}</div>
                                     <div class="source-card-stat-label">总文章</div>
@@ -1541,9 +1682,9 @@
                                     <div class="source-card-stat-value">${stats.today}</div>
                                     <div class="source-card-stat-label">今日</div>
                                 </div>
-                                <div class="source-card-stat">
+                                <div class="source-card-stat" onclick="event.stopPropagation(); toggleSource('${s.id}')">
                                     <div class="source-card-stat-value">${s.enabled ? '✓' : '✗'}</div>
-                                    <div class="source-card-stat-label">状态</div>
+                                    <div class="source-card-stat-label">${s.enabled ? '已启用' : '已禁用'}</div>
                                 </div>
                             </div>
                             <div class="history-panel" id="history-${s.id}">
