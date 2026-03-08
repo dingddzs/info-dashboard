@@ -1,0 +1,8 @@
+{
+  "routes": [
+    { "src": "/", "dest": "/api/index.py" },
+    { "src": "/index.html", "dest": "/api/index.py" },
+    { "src": "/themes/(.*)", "dest": "/api/index.py" },
+    { "src": "/api/(.*)", "dest": "/api/index.py" }
+  ]
+}
