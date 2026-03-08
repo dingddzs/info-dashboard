@@ -141,9 +141,18 @@ class ContentStore:
         """获取今日更新（用于首页展示）"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
-        today = date.today().isoformat()
 
-        # 只返回今天的更新，不是今天的数据不显示
+        # 使用北京时间获取今天的日期
+        try:
+            import time
+            # 获取本地时间戳
+            local_time = datetime.fromtimestamp(time.time())
+            # 假设服务器在中国，提取日期
+            today = local_time.strftime('%Y-%m-%d')
+        except:
+            today = date.today().isoformat()
+
+        # 只返回今天的更新
         cursor.execute("""
             SELECT id, source_id, platform, title, url, content, summary, published_at
             FROM updates
