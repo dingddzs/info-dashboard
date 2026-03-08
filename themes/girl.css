@@ -1,0 +1,280 @@
+/* 少女风主题 - 粉色+云朵元素 */
+:root {
+    --bg-primary: #fdf2f8;
+    --bg-secondary: #fce7f3;
+    --bg-card: rgba(255, 255, 255, 0.95);
+    --border-color: rgba(236, 72, 153, 0.25);
+    --text-primary: #831843;
+    --text-secondary: #9d174d;
+    --text-muted: #be185d;
+    --accent-cyan: #ec4899;
+    --accent-purple: #d946ef;
+    --accent-pink: #f472b6;
+    --accent-blue: #60a5fa;
+    --accent-green: #34d399;
+    --accent-orange: #fbbf24;
+    --accent-red: #f87171;
+    --gradient-1: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
+    --gradient-2: linear-gradient(135deg, #f9a8d4 0%, #f472b6 100%);
+    --gradient-3: linear-gradient(135deg, #fce7f3 0%, #f472b6 100%);
+    --glass-bg: rgba(255, 255, 255, 0.8);
+    --glass-border: rgba(236, 72, 153, 0.25);
+    --font-family: 'Quicksand', 'Inter', sans-serif;
+    --border-radius: 16px;
+    --card-radius: 20px;
+}
+
+/* 梦幻云朵背景 */
+.bg-animation::before {
+    background:
+        /* 粉色云朵 */
+        radial-gradient(ellipse 80px 40px at 15% 20%, rgba(244, 114, 182, 0.2) 0%, transparent 70%),
+        radial-gradient(ellipse 60px 30px at 85% 25%, rgba(217, 70, 239, 0.15) 0%, transparent 70%),
+        radial-gradient(ellipse 70px 35px at 50% 15%, rgba(244, 114, 182, 0.18) 0%, transparent 70%),
+        /* 蓝色云朵 */
+        radial-gradient(ellipse 50px 25px at 25% 80%, rgba(96, 165, 250, 0.15) 0%, transparent 70%),
+        radial-gradient(ellipse 65px 32px at 75% 75%, rgba(96, 165, 250, 0.12) 0%, transparent 70%),
+        /* 紫色云朵 */
+        radial-gradient(ellipse 55px 28px at 60% 70%, rgba(217, 70, 239, 0.15) 0%, transparent 70%),
+        /* 淡金色阳光 */
+        radial-gradient(circle at 80% 10%, rgba(251, 191, 36, 0.1) 0%, transparent 30%),
+        /* 粉色光晕 */
+        radial-gradient(circle at 20% 70%, rgba(244, 114, 182, 0.12) 0%, transparent 35%),
+        radial-gradient(circle at 90% 60%, rgba(217, 70, 239, 0.1) 0%, transparent 30%);
+    animation: cloudFloat 20s ease-in-out infinite;
+}
+
+@keyframes cloudFloat {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+    25% {
+        transform: translate(10px, -8px) scale(1.02);
+    }
+    50% {
+        transform: translate(-5px, 5px) scale(0.98);
+    }
+    75% {
+        transform: translate(8px, 10px) scale(1.01);
+    }
+}
+
+/* 爱心+云朵混合网格 */
+.grid-overlay {
+    background-image:
+        radial-gradient(rgba(236, 72, 153, 0.08) 4px, transparent 4px),
+        radial-gradient(rgba(96, 165, 250, 0.06) 3px, transparent 3px);
+    background-size: 35px 35px, 50px 50px;
+    background-position: 0 0, 20px 20px;
+}
+
+/* 侧边栏 */
+.sidebar {
+    background: linear-gradient(180deg, #fce7f3 0%, #fdf2f8 50%, #fff 100%);
+    border-right: 3px solid #f472b6;
+}
+
+.logo-icon {
+    background: linear-gradient(135deg, #f472b6, #ec4899) !important;
+    border-radius: 50% !important;
+    box-shadow:
+        0 4px 15px rgba(236, 72, 153, 0.4),
+        0 0 0 4px rgba(244, 114, 182, 0.2);
+}
+
+.nav-item {
+    border-radius: 20px;
+    margin: 8px 20px;
+    position: relative;
+}
+
+/* 漂浮云朵装饰 */
+.nav-item::after {
+    content: '☁';
+    position: absolute;
+    right: 15px;
+    opacity: 0;
+    transition: all 0.3s ease;
+    color: #d946ef;
+    font-size: 12px;
+}
+
+.nav-item:hover::after {
+    opacity: 0.5;
+    transform: translateX(5px);
+}
+
+.nav-item.active::after {
+    opacity: 0.8;
+}
+
+.nav-item:hover {
+    background: rgba(244, 114, 182, 0.15);
+    transform: translateX(5px);
+}
+
+.nav-item.active {
+    background: linear-gradient(90deg, #fce7f3, #f472b6);
+    color: #831843;
+    border: 2px solid #f472b6;
+    box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+}
+
+/* 统计卡片 - 糖果云朵色 */
+.stat-card {
+    background: white;
+    border: 3px solid;
+    border-radius: 24px;
+    box-shadow:
+        0 4px 15px rgba(236, 72, 153, 0.15),
+        0 0 0 2px rgba(255, 255, 255, 0.5) inset;
+}
+
+.stat-card:nth-child(1) {
+    border-color: #f472b6;
+    background: linear-gradient(135deg, white, #fdf2f8);
+}
+.stat-card:nth-child(2) {
+    border-color: #60a5fa;
+    background: linear-gradient(135deg, white, #eff6ff);
+}
+.stat-card:nth-child(3) {
+    border-color: #34d399;
+    background: linear-gradient(135deg, white, #ecfdf5);
+}
+.stat-card:nth-child(4) {
+    border-color: #fbbf24;
+    background: linear-gradient(135deg, white, #fffbeb);
+}
+
+.stat-card:nth-child(1) .stat-icon {
+    background: linear-gradient(135deg, #f9a8d4, #f472b6);
+    color: white;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(244, 114, 182, 0.4);
+}
+.stat-card:nth-child(2) .stat-icon {
+    background: linear-gradient(135deg, #93c5fd, #60a5fa);
+    color: white;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(96, 165, 250, 0.4);
+}
+.stat-card:nth-child(3) .stat-icon {
+    background: linear-gradient(135deg, #6ee7b7, #34d399);
+    color: white;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(52, 211, 153, 0.4);
+}
+.stat-card:nth-child(4) .stat-icon {
+    background: linear-gradient(135deg, #fcd34d, #fbbf24);
+    color: white;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(251, 191, 36, 0.4);
+}
+
+/* 平台标识 - 云朵圆形 */
+.platform-bilibili {
+    background: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(236, 72, 153, 0.4);
+}
+.platform-rss {
+    background: linear-gradient(135deg, #f9a8d4 0%, #d946ef 100%);
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(217, 70, 239, 0.4);
+}
+
+/* 按钮 - 圆润云朵感 */
+.btn-primary {
+    background: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
+    border-radius: 25px;
+    box-shadow:
+        0 4px 15px rgba(236, 72, 153, 0.35),
+        0 0 0 2px rgba(255, 255, 255, 0.3) inset;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+.btn-primary:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow:
+        0 8px 25px rgba(236, 72, 153, 0.45),
+        0 0 0 2px rgba(255, 255, 255, 0.3) inset;
+}
+
+.btn-secondary {
+    background: white;
+    border: 2px solid #f472b6;
+    border-radius: 25px;
+    color: #ec4899;
+    font-weight: 500;
+}
+.btn-secondary:hover {
+    background: #fdf2f8;
+}
+
+/* 卡片 */
+.card {
+    background: white;
+    border: 2px solid #fce7f3;
+    border-radius: 24px;
+    box-shadow:
+        0 4px 20px rgba(236, 72, 153, 0.12),
+        0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+}
+
+.card-header {
+    border-bottom: 2px dashed #fce7f3;
+}
+
+/* 更新项 - 樱花装饰 */
+.update-item {
+    background: white;
+    border: 2px solid #fce7f3;
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(236, 72, 153, 0.08);
+    position: relative;
+}
+.update-item::before {
+    content: '✿';
+    position: absolute;
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #f472b6;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    font-size: 14px;
+}
+.update-item:hover::before {
+    opacity: 1;
+}
+.update-item:hover {
+    border-color: #f472b6;
+    transform: translateX(8px);
+    box-shadow: 0 4px 20px rgba(236, 72, 153, 0.2);
+}
+
+/* 提醒 */
+.reminder-item {
+    background: white;
+    border: 2px solid;
+    border-radius: 18px;
+}
+.reminder-item.urgent {
+    border-color: #f87171;
+    background: linear-gradient(135deg, #fef2f2, white);
+}
+.reminder-item.warning {
+    border-color: #fbbf24;
+    background: linear-gradient(135deg, #fffbeb, white);
+}
+
+/* 滚动条 - 粉色云朵 */
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #f472b6, #ec4899);
+    border-radius: 10px;
+    border: 2px solid white;
+}

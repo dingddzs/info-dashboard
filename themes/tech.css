@@ -1,0 +1,83 @@
+/* 科技风主题 - 默认 */
+:root {
+    --bg-primary: #0a0a0f;
+    --bg-secondary: #12121a;
+    --bg-card: rgba(30, 30, 45, 0.6);
+    --border-color: rgba(255, 255, 255, 0.08);
+    --text-primary: #ffffff;
+    --text-secondary: #a0a0b0;
+    --text-muted: #6a6a7a;
+    --accent-cyan: #00d4ff;
+    --accent-purple: #a855f7;
+    --accent-pink: #ec4899;
+    --accent-blue: #3b82f6;
+    --accent-green: #10b981;
+    --accent-orange: #f59e0b;
+    --accent-red: #ef4444;
+    --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.05);
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --border-radius: 16px;
+    --card-radius: 20px;
+}
+
+/* 动态背景 */
+.bg-animation::before {
+    background:
+        radial-gradient(circle at 20% 80%, rgba(120, 80, 200, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(236, 72, 153, 0.08) 0%, transparent 40%);
+    animation: bgFloat 20s ease-in-out infinite;
+}
+
+@keyframes bgFloat {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(30px, -30px) rotate(1deg); }
+    66% { transform: translate(-20px, 20px) rotate(-1deg); }
+}
+
+/* 网格背景 */
+.grid-overlay {
+    background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 50px 50px;
+}
+
+/* 侧边栏 */
+.sidebar {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border-right: 1px solid var(--glass-border);
+}
+
+/* 统计卡片 */
+.stat-card:nth-child(1) { border-left: 3px solid var(--accent-purple); }
+.stat-card:nth-child(2) { border-left: 3px solid var(--accent-pink); }
+.stat-card:nth-child(3) { border-left: 3px solid var(--accent-cyan); }
+.stat-card:nth-child(4) { border-left: 3px solid var(--accent-green); }
+
+.stat-card:nth-child(1) .stat-icon { background: rgba(168, 85, 247, 0.15); color: var(--accent-purple); }
+.stat-card:nth-child(2) .stat-icon { background: rgba(236, 72, 153, 0.15); color: var(--accent-pink); }
+.stat-card:nth-child(3) .stat-icon { background: rgba(0, 212, 255, 0.15); color: var(--accent-cyan); }
+.stat-card:nth-child(4) .stat-icon { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+
+/* 平台标识 */
+.platform-bilibili {
+    background: linear-gradient(135deg, #00a1d6 0%, #0084b4 100%);
+}
+.platform-rss {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+}
+
+/* 按钮 */
+.btn-primary {
+    background: var(--gradient-1);
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+}
+.btn-primary:hover {
+    box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
+}

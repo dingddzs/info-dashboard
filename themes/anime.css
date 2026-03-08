@@ -1,0 +1,229 @@
+/* 二次元风主题 - 清新日系动漫风格 */
+:root {
+    --bg-primary: #e8f4f8;
+    --bg-secondary: #d4e9f7;
+    --bg-card: rgba(255, 255, 255, 0.85);
+    --border-color: rgba(56, 189, 248, 0.3);
+    --text-primary: #1e3a5f;
+    --text-secondary: #3b5998;
+    --text-muted: #64748b;
+    --accent-cyan: #38bdf8;
+    --accent-purple: #a78bfa;
+    --accent-pink: #f472b6;
+    --accent-blue: #60a5fa;
+    --accent-green: #34d399;
+    --accent-orange: #fbbf24;
+    --accent-red: #f87171;
+    --gradient-1: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+    --gradient-2: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+    --gradient-3: linear-gradient(135deg, #34d399 0%, #38bdf8 100%);
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(56, 189, 248, 0.25);
+    --font-family: 'Noto Sans SC', 'M PLUS Rounded 1c', 'Inter', sans-serif;
+    --border-radius: 12px;
+    --card-radius: 16px;
+}
+
+/* 清新天空背景 - 蓝天白云 */
+.bg-animation::before {
+    background:
+        /* 蓝天渐变 */
+        linear-gradient(180deg, #e0f2fe 0%, #d4e9f7 50%, #e8f4f8 100%),
+        /* 白色云朵 */
+        radial-gradient(ellipse 100px 50px at 10% 15%, rgba(255, 255, 255, 0.8) 0%, transparent 70%),
+        radial-gradient(ellipse 80px 40px at 30% 25%, rgba(255, 255, 255, 0.7) 0%, transparent 70%),
+        radial-gradient(ellipse 120px 60px at 70% 10%, rgba(255, 255, 255, 0.75) 0%, transparent 70%),
+        radial-gradient(ellipse 70px 35px at 85% 30%, rgba(255, 255, 255, 0.65) 0%, transparent 70%),
+        radial-gradient(ellipse 90px 45px at 50% 20%, rgba(255, 255, 255, 0.7) 0%, transparent 70%),
+        /* 淡彩色光晕 */
+        radial-gradient(circle at 80% 80%, rgba(167, 139, 250, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 20% 85%, rgba(56, 189, 248, 0.15) 0%, transparent 35%);
+    animation: animeFloat 15s ease-in-out infinite;
+}
+
+@keyframes animeFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+/* 清新网格 - 淡蓝 */
+.grid-overlay {
+    background-image:
+        linear-gradient(rgba(56, 189, 248, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(167, 139, 250, 0.06) 1px, transparent 1px);
+    background-size: 35px 35px;
+}
+
+/* 侧边栏 - 清新渐变 */
+.sidebar {
+    background: linear-gradient(180deg, #d4e9f7 0%, #e8f4f8 50%, #f0f9ff 100%);
+    border-right: 2px solid rgba(56, 189, 248, 0.3);
+    box-shadow: 2px 0 15px rgba(56, 189, 248, 0.1);
+}
+
+/* logo - 六边形清新 */
+.logo-icon {
+    background: linear-gradient(135deg, #38bdf8, #818cf8) !important;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    border-radius: 0 !important;
+    box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
+}
+
+.logo-text {
+    color: #1e3a5f !important;
+}
+
+/* 导航项 - 动漫风格左边框 */
+.nav-item {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.nav-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    background: linear-gradient(180deg, #38bdf8, #a78bfa);
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+}
+
+.nav-item:hover::before,
+.nav-item.active::before {
+    transform: scaleY(1);
+}
+
+.nav-item:hover {
+    background: rgba(56, 189, 248, 0.1);
+}
+
+.nav-item.active {
+    background: linear-gradient(90deg, rgba(56, 189, 248, 0.15), transparent);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    color: #0369a1;
+}
+
+/* 统计卡片 - 清新彩色 */
+.stat-card {
+    background: white;
+    border: 2px solid;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(56, 189, 248, 0.12);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(56, 189, 248, 0.2);
+}
+
+.stat-card:nth-child(1) { border-color: #38bdf8; }
+.stat-card:nth-child(2) { border-color: #a78bfa; }
+.stat-card:nth-child(3) { border-color: #34d399; }
+.stat-card:nth-child(4) { border-color: #fbbf24; }
+
+.stat-card:nth-child(1) .stat-icon {
+    background: rgba(56, 189, 248, 0.15);
+    color: #0284c7;
+    border: 2px solid #38bdf8;
+    border-radius: 12px;
+}
+.stat-card:nth-child(2) .stat-icon {
+    background: rgba(167, 139, 250, 0.15);
+    color: #7c3aed;
+    border: 2px solid #a78bfa;
+    border-radius: 12px;
+}
+.stat-card:nth-child(3) .stat-icon {
+    background: rgba(52, 211, 153, 0.15);
+    color: #059669;
+    border: 2px solid #34d399;
+    border-radius: 12px;
+}
+.stat-card:nth-child(4) .stat-icon {
+    background: rgba(251, 191, 36, 0.15);
+    color: #d97706;
+    border: 2px solid #fbbf24;
+    border-radius: 12px;
+}
+
+/* 平台标识 - 清新六边形 */
+.platform-bilibili {
+    background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+.platform-rss {
+    background: linear-gradient(135deg, #34d399 0%, #38bdf8 100%);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+/* 按钮 - 清新动漫风 */
+.btn-primary {
+    background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+    color: white;
+    font-weight: 500;
+}
+.btn-primary:hover {
+    box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: white;
+    border: 2px solid #38bdf8;
+    border-radius: 12px;
+    color: #0284c7;
+}
+
+/* 卡片 */
+.card {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(56, 189, 248, 0.15);
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(56, 189, 248, 0.08);
+}
+
+/* 更新项 */
+.update-item {
+    background: rgba(255, 255, 255, 0.85);
+    border-left: 3px solid #38bdf8;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+.update-item:hover {
+    background: rgba(56, 189, 248, 0.08);
+    transform: translateX(3px);
+    box-shadow: 0 4px 15px rgba(56, 189, 248, 0.15);
+}
+
+/* 提醒 */
+.reminder-item {
+    background: white;
+    border: 2px solid;
+    border-radius: 14px;
+}
+.reminder-item.urgent {
+    border-color: #f87171;
+    background: linear-gradient(135deg, #fef2f2, white);
+}
+.reminder-item.warning {
+    border-color: #fbbf24;
+    background: linear-gradient(135deg, #fffbeb, white);
+}
+
+/* 滚动条 - 清新蓝 */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #38bdf8, #a78bfa);
+    border-radius: 8px;
+    border: 2px solid #e8f4f8;
+}

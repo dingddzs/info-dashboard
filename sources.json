@@ -1,0 +1,44 @@
+[
+  {
+    "id": "bili_1",
+    "platform": "bilibili",
+    "name": "巫师财经",
+    "uid": 472747194,
+    "enabled": true
+  },
+  {
+    "id": "bili_2",
+    "platform": "bilibili",
+    "name": "陈睿",
+    "uid": 208259,
+    "enabled": true
+  },
+  {
+    "id": "blog_1",
+    "platform": "rss",
+    "name": "阮一峰的网络日志",
+    "url": "https://www.ruanyifeng.com/blog/atom.xml",
+    "enabled": true
+  },
+  {
+    "id": "bilibili_2",
+    "platform": "bilibili",
+    "name": "橘鸦juya",
+    "enabled": true,
+    "uid": 285286947
+  },
+  {
+    "id": "bilibili_3",
+    "platform": "bilibili",
+    "name": "小lin说",
+    "enabled": true,
+    "uid": 520819684
+  },
+  {
+    "id": "bilibili_4",
+    "platform": "bilibili",
+    "name": "影视飓风",
+    "enabled": true,
+    "uid": 946974
+  }
+]

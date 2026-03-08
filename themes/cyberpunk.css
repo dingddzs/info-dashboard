@@ -1,0 +1,147 @@
+/* 赛博朋克风主题 - 低亮度不刺眼 */
+:root {
+    --bg-primary: #0a0612;
+    --bg-secondary: #12081e;
+    --bg-card: rgba(20, 10, 30, 0.8);
+    --border-color: rgba(138, 43, 226, 0.25);
+    --text-primary: #c8bfe7;
+    --text-secondary: #9d8ec7;
+    --text-muted: #6b5b7a;
+    --accent-cyan: #7b68ee;
+    --accent-purple: #9370db;
+    --accent-pink: #c71585;
+    --accent-blue: #6a5acd;
+    --accent-green: #3cb371;
+    --accent-orange: #cd853f;
+    --accent-red: #b22222;
+    --gradient-1: linear-gradient(135deg, #4b0082 0%, #483d8b 100%);
+    --gradient-2: linear-gradient(135deg, #800080 0%, #4b0082 100%);
+    --gradient-3: linear-gradient(135deg, #483d8b 0%, #3cb371 100%);
+    --glass-bg: rgba(10, 5, 15, 0.7);
+    --glass-border: rgba(138, 43, 226, 0.15);
+    --font-family: 'Orbitron', 'Inter', sans-serif;
+    --border-radius: 6px;
+    --card-radius: 10px;
+}
+
+/* 低亮度网格背景 */
+.bg-animation::before {
+    background:
+        /* 暗淡的霓虹光晕 */
+        radial-gradient(ellipse at 20% 30%, rgba(75, 0, 130, 0.2) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(72, 61, 139, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(128, 0, 128, 0.1) 0%, transparent 60%);
+    animation: subtlePulse 8s ease-in-out infinite;
+}
+
+@keyframes subtlePulse {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+}
+
+/* 暗色网格 */
+.grid-overlay {
+    background-image:
+        linear-gradient(rgba(75, 0, 130, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(72, 61, 139, 0.08) 1px, transparent 1px);
+    background-size: 30px 30px;
+}
+
+/* 侧边栏 - 低亮度暗色 */
+.sidebar {
+    background: rgba(12, 6, 18, 0.95);
+    border-right: 1px solid rgba(138, 43, 226, 0.2);
+    box-shadow: 0 0 15px rgba(75, 0, 130, 0.2);
+}
+
+/* logo - 低亮度发光 */
+.logo-icon {
+    box-shadow: 0 0 12px rgba(123, 104, 238, 0.3), inset 0 0 8px rgba(123, 104, 238, 0.2);
+    border-radius: 4px !important;
+}
+
+/* 导航项 */
+.nav-item.active {
+    background: rgba(75, 0, 130, 0.25);
+    border: 1px solid rgba(138, 43, 226, 0.3);
+    box-shadow: 0 0 10px rgba(123, 104, 238, 0.2);
+}
+
+/* 统计卡片 - 低亮度边框 */
+.stat-card {
+    border: 1px solid;
+    box-shadow: 0 0 10px rgba(75, 0, 130, 0.15);
+    background: rgba(15, 8, 22, 0.9);
+}
+.stat-card:nth-child(1) { border-color: rgba(123, 104, 238, 0.3); }
+.stat-card:nth-child(2) { border-color: rgba(60, 179, 113, 0.3); }
+.stat-card:nth-child(3) { border-color: rgba(199, 21, 133, 0.3); }
+.stat-card:nth-child(4) { border-color: rgba(106, 90, 205, 0.3); }
+
+.stat-card:nth-child(1) .stat-icon {
+    background: rgba(123, 104, 238, 0.15);
+    color: #9370db;
+    box-shadow: 0 0 8px rgba(123, 104, 238, 0.2);
+}
+.stat-card:nth-child(2) .stat-icon {
+    background: rgba(60, 179, 113, 0.15);
+    color: #3cb371;
+    box-shadow: 0 0 8px rgba(60, 179, 113, 0.2);
+}
+.stat-card:nth-child(3) .stat-icon {
+    background: rgba(199, 21, 133, 0.15);
+    color: #c71585;
+    box-shadow: 0 0 8px rgba(199, 21, 133, 0.2);
+}
+.stat-card:nth-child(4) .stat-icon {
+    background: rgba(106, 90, 205, 0.15);
+    color: #6a5acd;
+    box-shadow: 0 0 8px rgba(106, 90, 205, 0.2);
+}
+
+/* 平台标识 - 低亮度 */
+.platform-bilibili {
+    background: linear-gradient(135deg, #4b0082 0%, #483d8b 100%);
+    box-shadow: 0 0 10px rgba(75, 0, 130, 0.3);
+}
+.platform-rss {
+    background: linear-gradient(135deg, #8b4513 0%, #cd853f 100%);
+    box-shadow: 0 0 10px rgba(205, 133, 63, 0.3);
+}
+
+/* 按钮 - 低亮度 */
+.btn-primary {
+    background: linear-gradient(135deg, #4b0082 0%, #6a5acd 100%);
+    border: 1px solid rgba(123, 104, 238, 0.3);
+    box-shadow: 0 0 12px rgba(123, 104, 238, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.btn-primary:hover {
+    box-shadow: 0 0 20px rgba(123, 104, 238, 0.3);
+}
+
+/* 更新项 */
+.update-item {
+    border: 1px solid rgba(75, 0, 130, 0.2);
+}
+.update-item:hover {
+    border-color: rgba(138, 43, 226, 0.3);
+    box-shadow: 0 0 12px rgba(75, 0, 130, 0.2);
+}
+
+/* 提醒 */
+.reminder-item.urgent {
+    border-color: rgba(178, 34, 34, 0.4);
+    box-shadow: 0 0 8px rgba(178, 34, 34, 0.2);
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+    width: 8px;
+    background: #0a0612;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(123, 104, 238, 0.3);
+    border-radius: 4px;
+}

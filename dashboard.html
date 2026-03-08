@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>信息源监控看板 | InfoDashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link id="theme-css" rel="stylesheet" href="/themes/tech.css">
+    <style id="base-styles">
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-family, 'Inter', sans-serif);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+        }
+
+        /* 动态背景 */
+        .bg-animation {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+        }
+
+        /* 网格背景 */
+        .grid-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            position: fixed;
+            left: 0; top: 0;
+            width: 260px;
+            height: 100vh;
+            padding: 24px 0;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 24px 32px;
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 24px;
+        }
+        .logo-icon {
+            width: 42px; height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+        }
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #a0a0b0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 24px;
+            margin: 4px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+        .nav-item i { font-size: 18px; width: 24px; text-align: center; }
+        .nav-item span { font-size: 14px; font-weight: 500; }
+
+        /* 主内容区 */
+        .main-content {
+            margin-left: 260px;
+            padding: 32px 40px;
+            min-height: 100vh;
+        }
+
+        /* 顶部栏 */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+        .header-title h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header-title p { color: var(--text-secondary); font-size: 14px; }
+        .header-actions { display: flex; gap: 12px; }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: var(--border-radius, 10px);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            outline: none;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: var(--glass-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
+        }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.08); }
+
+        /* 统计卡片 */
+        .stats-grid {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+        .stat-card {
+            flex: 1;
+            backdrop-filter: blur(20px);
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .stat-icon {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .stat-info { flex: 1; }
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+        }
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* 内容网格 */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 28px;
+        }
+
+        /* 卡片通用样式 */
+        .card {
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--card-radius, 20px);
+            overflow: hidden;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card-title i { color: var(--accent-cyan); }
+        .card-body { padding: 20px 24px; }
+
+        /* 更新列表 */
+        .update-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .update-item {
+            display: flex;
+            gap: 14px;
+            padding: 16px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .update-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.12);
+            transform: translateX(4px);
+        }
+        .platform-badge {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .update-content { flex: 1; min-width: 0; }
+        .update-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            line-height: 1.4;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .update-title:hover { color: var(--accent-cyan); }
+        .update-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .update-time {
+            font-size: 12px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        /* 人脉提醒样式 */
+        .reminder-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .reminder-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        .reminder-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        .reminder-item.urgent {
+            border-color: rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.1);
+        }
+        .reminder-item.warning {
+            border-color: rgba(245, 158, 11, 0.3);
+            background: rgba(245, 158, 11, 0.1);
+        }
+        .reminder-icon {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            background: rgba(102, 126, 234, 0.15);
+            color: var(--accent-cyan);
+        }
+        .reminder-content { flex: 1; }
+        .reminder-text {
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        .reminder-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        .reminder-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .reminder-badge.urgent { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+        .reminder-badge.warning { background: rgba(245, 158, 11, 0.2); color: var(--accent-orange); }
+        .reminder-badge.info { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+
+        /* 信源管理页面 */
+        .source-page { display: none; }
+        .source-page.active { display: block; }
+        .source-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        /* 联系人样式 */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .contact-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .contact-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            border-color: var(--accent-cyan);
+        }
+        .contact-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+        }
+        .contact-info {
+            flex: 1;
+        }
+        .contact-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .contact-identity {
+            font-size: 13px;
+            opacity: 0.7;
+        }
+        .contact-birthday {
+            font-size: 12px;
+            opacity: 0.6;
+            margin-top: 4px;
+        }
+
+        /* 弹窗样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow: auto;
+        }
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--glass-border);
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-body {
+            padding: 20px;
+        }
+        .modal-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .detail-section {
+            margin-bottom: 20px;
+        }
+        .detail-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .detail-section p {
+            margin: 6px 0;
+            font-size: 14px;
+        }
+        .todo-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            background: var(--bg-primary);
+            border-radius: 8px;
+        }
+        .todo-item .completed {
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+        .todo-date {
+            font-size: 12px;
+            opacity: 0.6;
+            margin-left: auto;
+        }
+
+        .source-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .source-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        .source-card-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+        .source-card-icon {
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            background: rgba(102, 126, 234, 0.15);
+        }
+        .source-card-info { flex: 1; }
+        .source-card-name {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .source-card-platform {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .source-card-stats {
+            display: flex;
+            gap: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--glass-border);
+        }
+        .source-card-stat {
+            text-align: center;
+        }
+        .source-card-stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent-cyan);
+        }
+        .source-card-stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* 历史展开面板 */
+        .history-panel {
+            display: none;
+            margin-top: 12px;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+        }
+        .history-panel.active { display: block; }
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .history-item:last-child { border-bottom: none; }
+        .history-date {
+            font-size: 12px;
+            color: var(--text-muted);
+            width: 80px;
+        }
+        .history-title {
+            flex: 1;
+            font-size: 13px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .history-title a {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+        .history-title a:hover { color: var(--accent-cyan); }
+
+        /* 展开按钮 */
+        .expand-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            padding: 10px;
+            margin-top: 12px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .expand-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+        }
+        .expand-btn i { transition: transform 0.3s ease; }
+        .expand-btn.active i { transform: rotate(180deg); }
+
+        /* 主题设置 */
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .theme-card {
+            background: var(--glass-bg);
+            border: 2px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .theme-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-cyan);
+        }
+        .theme-card.active {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+        .theme-preview {
+            width: 100%;
+            height: 100px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+        .theme-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .theme-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* 加载动画 */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 48px;
+            color: var(--text-muted);
+        }
+        .loading-spinner {
+            width: 20px; height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--accent-cyan);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* 空状态 */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 48px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+        .empty-state i { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+
+        /* 返回按钮 */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: color 0.3s ease;
+        }
+        .back-btn:hover { color: var(--text-primary); }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 8px; height: 8px;
+        }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+
+        /* 响应式 */
+        @media (max-width: 1200px) {
+            .content-grid { grid-template-columns: 1fr; }
+            .stats-grid { flex-wrap: wrap; }
+            .stat-card { flex: 1 1 calc(50% - 10px); }
+            .theme-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+        }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .main-content { margin-left: 0; padding: 20px; }
+            .stat-card { flex: 1 1 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-satellite-dish"></i>
+            </div>
+            <div class="logo-text">InfoDash</div>
+        </div>
+
+        <nav>
+            <a href="#" class="nav-item active" onclick="showPage('home')">
+                <i class="fas fa-home"></i>
+                <span>首页</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showPage('sources')">
+                <i class="fas fa-rss"></i>
+                <span>信源管理</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showPage('contacts')">
+                <i class="fas fa-address-book"></i>
+                <span>人脉管理</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showPage('settings')">
+                <i class="fas fa-cog"></i>
+                <span>设置</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- 主内容 -->
+    <main class="main-content">
+        <!-- 首页 -->
+        <div id="home-page" class="page-content">
+            <!-- 头部 -->
+            <header class="header">
+                <div class="header-title">
+                    <h1>信息监控看板</h1>
+                    <p id="currentDate">加载中...</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="refreshData()">
+                        <i class="fas fa-sync-alt"></i>
+                        刷新
+                    </button>
+                    <button class="btn btn-primary" onclick="showPage('sources')">
+                        <i class="fas fa-plus"></i>
+                        添加信源
+                    </button>
+                </div>
+            </header>
+
+            <!-- 统计卡片 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-database"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="sourceCount">-</div>
+                        <div class="stat-label">监控信源</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-bolt"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="todayCount">-</div>
+                        <div class="stat-label">今日更新</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-archive"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="totalCount">-</div>
+                        <div class="stat-label">总收录</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="lastUpdate">刚刚</div>
+                        <div class="stat-label">最后更新</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 内容网格 -->
+            <div class="content-grid">
+                <!-- 左侧：更新列表 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-stream"></i>
+                            最新动态
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="update-list" id="updateList">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                <span>加载中...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧：人脉提醒 -->
+                <div>
+                    <div class="card" style="margin-bottom: 20px;">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fas fa-bell"></i>
+                                人脉提醒
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="reminder-list" id="reminderList">
+                                <div class="loading" style="padding: 24px;">
+                                    <div class="loading-spinner"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 信源管理页 -->
+        <div id="sources-page" class="source-page">
+            <div class="back-btn" onclick="showPage('home')">
+                <i class="fas fa-arrow-left"></i>
+                返回首页
+            </div>
+            <header class="header" style="margin-bottom: 24px;">
+                <div class="header-title">
+                    <h1>信源管理</h1>
+                    <p>管理你的信息订阅源</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        添加信源
+                    </button>
+                </div>
+            </header>
+            <div class="source-grid" id="sourceGrid">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <span>加载中...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 人脉管理页 -->
+        <div id="contacts-page" class="source-page">
+            <div class="back-btn" onclick="showPage('home')">
+                <i class="fas fa-arrow-left"></i>
+                返回首页
+            </div>
+            <header class="header" style="margin-bottom: 24px;">
+                <div class="header-title">
+                    <h1>人脉管理</h1>
+                    <p>管理联系人及提醒</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showAddContactModal()">
+                        <i class="fas fa-plus"></i>
+                        添加联系人
+                    </button>
+                </div>
+            </header>
+
+            <!-- 联系人列表 -->
+            <div class="contact-grid" id="contactList">
+                <div class="empty-state">
+                    <i class="fas fa-address-book"></i>
+                    <p>暂无联系人，点击上方按钮添加</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 添加联系人弹窗 -->
+        <div class="modal" id="addContactModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span>添加联系人</span>
+                    <span onclick="hideAddContactModal()" style="cursor:pointer;">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>姓名 *</label>
+                        <input type="text" id="contactName" placeholder="请输入姓名">
+                    </div>
+                    <div class="form-group">
+                        <label>性别</label>
+                        <select id="contactGender">
+                            <option value="">未设置</option>
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>生日</label>
+                        <input type="date" id="contactBirthday">
+                    </div>
+                    <div class="form-group">
+                        <label>身份/职业</label>
+                        <input type="text" id="contactIdentity" placeholder="如：产品经理、投资人...">
+                    </div>
+                    <div class="form-group">
+                        <label>重要备忘</label>
+                        <textarea id="contactInfo" placeholder="记录重要信息、偏好、合作历史等..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="hideAddContactModal()">取消</button>
+                    <button class="btn btn-primary" onclick="addContact()">添加</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 联系人详情弹窗 -->
+        <div class="modal" id="contactDetailModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span id="detailContactName">联系人详情</span>
+                    <span onclick="hideContactDetailModal()" style="cursor:pointer;">&times;</span>
+                </div>
+                <div class="modal-body" id="contactDetailContent">
+                    <!-- 动态加载 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 设置页 -->
+        <div id="settings-page" class="source-page">
+            <div class="back-btn" onclick="showPage('home')">
+                <i class="fas fa-arrow-left"></i>
+                返回首页
+            </div>
+            <header class="header" style="margin-bottom: 24px;">
+                <div class="header-title">
+                    <h1>设置</h1>
+                    <p>个性化你的看板</p>
+                </div>
+            </header>
+
+            <!-- 主题设置 -->
+            <div class="card" style="margin-bottom: 28px;">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-palette"></i>
+                        主题风格
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="theme-grid" id="themeGrid">
+                        <!-- 主题卡片将由JS生成 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 其他设置 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-sliders-h"></i>
+                        系统设置
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="empty-state" style="padding: 32px;">
+                        <i class="fas fa-tools" style="font-size: 32px;"></i>
+                        <p style="font-size: 13px;">更多设置项开发中...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 主题配置
+        const themes = [
+            { id: 'tech', name: '科技风', desc: '默认深色科技风格', emoji: '🚀', color: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
+            { id: 'cyberpunk', name: '赛博朋克', desc: '霓虹未来都市风格', emoji: '🌃', color: 'linear-gradient(135deg, #ff00ff 0%, #00ffff 100%)' },
+            { id: 'hacker', name: '黑客风', desc: 'Matrix代码风格', emoji: '💻', color: 'linear-gradient(135deg, #00ff00 0%, #008800 100%)' },
+            { id: 'kawaii', name: '可爱风', desc: '粉色可爱治愈风格', emoji: '🌸', color: 'linear-gradient(135deg, #ffb6c1 0%, #ff69b4 100%)' },
+            { id: 'anime', name: '二次元', desc: '动漫星空幻想风格', emoji: '⭐', color: 'linear-gradient(135deg, #e94560 0%, #9b59b6 100%)' },
+            { id: 'girl', name: '少女风', desc: '梦幻甜美浪漫风格', emoji: '💕', color: 'linear-gradient(135deg, #f472b6 0%, #ec4899 100%)' }
+        ];
+
+        // 平台图标映射
+        const platformIcons = {
+            'bilibili': '📺',
+            'wechat': '💬',
+            'zhihu': '🤔',
+            'rss': '📰'
+        };
+        const platformNames = {
+            'bilibili': 'Bilibili',
+            'wechat': '微信公众号',
+            'zhihu': '知乎',
+            'rss': 'RSS订阅'
+        };
+
+        let sourceStats = {};
+        let currentTheme = localStorage.getItem('theme') || 'tech';
+
+        // 初始化主题
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'tech';
+            setTheme(savedTheme);
+            renderThemeGrid();
+        }
+
+        // 设置主题
+        function setTheme(themeId) {
+            currentTheme = themeId;
+            document.getElementById('theme-css').href = `/themes/${themeId}.css`;
+            localStorage.setItem('theme', themeId);
+            updateThemeGrid();
+        }
+
+        // 渲染主题选择网格
+        function renderThemeGrid() {
+            const grid = document.getElementById('themeGrid');
+            grid.innerHTML = themes.map(t => `
+                <div class="theme-card ${t.id === currentTheme ? 'active' : ''}" onclick="setTheme('${t.id}')">
+                    <div class="theme-preview" style="background: ${t.color};">${t.emoji}</div>
+                    <div class="theme-name">${t.name}</div>
+                    <div class="theme-desc">${t.desc}</div>
+                </div>
+            `).join('');
+        }
+
+        // 更新主题网格选中状态
+        function updateThemeGrid() {
+            document.querySelectorAll('.theme-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            const activeCard = document.querySelector(`.theme-card:nth-child(${themes.findIndex(t => t.id === currentTheme) + 1})`);
+            if (activeCard) activeCard.classList.add('active');
+        }
+
+        // 页面切换
+        function showPage(page) {
+            document.querySelectorAll('.page-content, .source-page').forEach(el => {
+                el.style.display = 'none';
+            });
+            const targetId = page + '-page';
+            const targetEl = document.getElementById(targetId);
+            if (targetEl) {
+                targetEl.style.display = 'block';
+                if (page === 'sources') {
+                    targetEl.classList.add('active');
+                    loadSourcesPage();
+                }
+                if (page === 'home') {
+                    // 首页加载数据
+                    loadStats();
+                    loadUpdates();
+                    loadReminders();
+                }
+                if (page === 'contacts') {
+                    loadContacts();
+                }
+            }
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            const navIndex = { 'home': 0, 'sources': 1, 'contacts': 2, 'settings': 3 }[page];
+            if (navIndex !== undefined) {
+                document.querySelectorAll('.nav-item')[navIndex].classList.add('active');
+            }
+        }
+
+        // 设置日期
+        function updateDate() {
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('zh-CN', options);
+        }
+
+        // 加载统计数据
+        async function loadStats() {
+            try {
+                const res = await fetch('/api/stats');
+                const data = await res.json();
+                document.getElementById('sourceCount').textContent = data.sources;
+                document.getElementById('todayCount').textContent = data.today_updates;
+                document.getElementById('totalCount').textContent = data.total_updates;
+                sourceStats = data.source_stats || {};
+            } catch (e) {
+                console.error('加载统计失败:', e);
+            }
+        }
+
+        // 加载更新列表
+        async function loadUpdates() {
+            try {
+                const res = await fetch('/api/updates');
+                const data = await res.json();
+                const listEl = document.getElementById('updateList');
+
+                if (data.updates.length === 0) {
+                    listEl.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>今日暂无更新</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                listEl.innerHTML = data.updates.map(u => {
+                    const time = new Date(u.published_at).toLocaleTimeString('zh-CN', {
+                        hour: '2-digit', minute: '2-digit'
+                    });
+                    const icon = platformIcons[u.platform] || '📄';
+                    return `
+                        <div class="update-item" onclick="window.open('${u.url}', '_blank')">
+                            <div class="platform-badge platform-${u.platform}">${icon}</div>
+                            <div class="update-content">
+                                <div class="update-title">${u.title}</div>
+                                <div class="update-meta">
+                                    <span>${u.source_name}</span>
+                                    <span>${platformNames[u.platform] || u.platform}</span>
+                                </div>
+                            </div>
+                            <div class="update-time">${time}</div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (e) {
+                console.error('加载更新失败:', e);
+            }
+        }
+
+        // 加载人脉提醒
+        async function loadReminders() {
+            try {
+                const res = await fetch('/api/reminders');
+                const data = await res.json();
+                const listEl = document.getElementById('reminderList');
+
+                let html = '';
+
+                // 生日提醒
+                if (data.birthdays && data.birthdays.length > 0) {
+                    data.birthdays.forEach(b => {
+                        const typeClass = b.days_until === 0 ? 'urgent' : (b.days_until <= 3 ? 'warning' : 'info');
+                        html += `
+                            <div class="reminder-item ${typeClass}">
+                                <div class="reminder-icon">🎂</div>
+                                <div class="reminder-content" style="flex:1;">
+                                    <div class="reminder-text">${b.name} 生日</div>
+                                    <div class="reminder-meta">${b.days_until === 0 ? '今天' : b.days_until + '天后'}</div>
+                                </div>
+                                <div class="reminder-badge ${typeClass}">${b.days_until === 0 ? '今天' : b.days_until + '天'}</div>
+                                <input type="checkbox" title="取消提醒" onclick="ignoreReminder('birthday', ${b.contact_id}, null, ${b.ignore_year})" style="width:18px; height:18px; cursor:pointer; margin-left:8px;">
+                            </div>
+                        `;
+                    });
+                }
+
+                // 待办提醒
+                if (data.todos && data.todos.length > 0) {
+                    data.todos.forEach(t => {
+                        const typeClass = t.days_until <= 2 ? 'urgent' : 'warning';
+                        html += `
+                            <div class="reminder-item ${typeClass}">
+                                <div class="reminder-icon">📌</div>
+                                <div class="reminder-content" style="flex:1;">
+                                    <div class="reminder-text">${t.task_content}</div>
+                                    <div class="reminder-meta">${t.contact_name}</div>
+                                </div>
+                                <div class="reminder-badge ${typeClass}">${t.days_until === 0 ? '今天' : t.days_until + '天'}</div>
+                                <input type="checkbox" title="取消提醒" onclick="ignoreReminder('todo', ${t.contact_id}, ${t.todo_id}, null)" style="width:18px; height:18px; cursor:pointer; margin-left:8px;">
+                            </div>
+                        `;
+                    });
+                }
+
+                if (!html) {
+                    listEl.innerHTML = `
+                        <div class="empty-state" style="padding: 24px;">
+                            <i class="fas fa-check-circle" style="font-size: 32px; margin-bottom: 8px;"></i>
+                            <p style="font-size: 13px;">暂无待办提醒</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                listEl.innerHTML = html;
+            } catch (e) {
+                console.error('加载提醒失败:', e);
+                document.getElementById('reminderList').innerHTML = `
+                    <div class="empty-state" style="padding: 24px;">
+                        <p style="font-size: 13px;">加载失败</p>
+                    </div>
+                `;
+            }
+        }
+
+        // 忽略提醒
+        async function ignoreReminder(type, contactId, todoId, year) {
+            try {
+                await fetch('/api/reminders/ignore', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: type,
+                        contact_id: contactId,
+                        todo_id: todoId,
+                        year: year
+                    })
+                });
+                loadReminders();
+            } catch (e) {
+                console.error('忽略提醒失败:', e);
+            }
+        }
+
+        // ========== 人脉管理 ==========
+        async function loadContacts() {
+            try {
+                const res = await fetch('/api/contacts');
+                const data = await res.json();
+                const listEl = document.getElementById('contactList');
+
+                if (!data.contacts || data.contacts.length === 0) {
+                    listEl.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-address-book"></i>
+                            <p>暂无联系人，点击上方按钮添加</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                listEl.innerHTML = data.contacts.map(c => `
+                    <div class="contact-card" onclick="showContactDetail(${c.id})">
+                        <div class="contact-avatar">${c.name.charAt(0)}</div>
+                        <div class="contact-info">
+                            <div class="contact-name">${c.name} ${c.gender ? '<span style="font-size:12px; opacity:0.6;">(' + c.gender + ')</span>' : ''}</div>
+                            <div class="contact-identity">${c.identity || '未设置身份'}</div>
+                            ${c.birthday ? '<div class="contact-birthday">生日: ' + c.birthday + '</div>' : ''}
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                console.error('加载联系人失败:', e);
+                document.getElementById('contactList').innerHTML = `
+                    <div class="empty-state">
+                        <p>加载失败</p>
+                    </div>
+                `;
+            }
+        }
+
+        function showAddContactModal() {
+            document.getElementById('addContactModal').classList.add('active');
+            document.getElementById('contactName').value = '';
+            document.getElementById('contactGender').value = '';
+            document.getElementById('contactBirthday').value = '';
+            document.getElementById('contactIdentity').value = '';
+            document.getElementById('contactInfo').value = '';
+        }
+
+        function hideAddContactModal() {
+            document.getElementById('addContactModal').classList.remove('active');
+        }
+
+        async function addContact() {
+            const name = document.getElementById('contactName').value.trim();
+            if (!name) {
+                alert('请输入姓名');
+                return;
+            }
+
+            const data = {
+                name: name,
+                gender: document.getElementById('contactGender').value,
+                birthday: document.getElementById('contactBirthday').value,
+                identity: document.getElementById('contactIdentity').value.trim(),
+                important_info: document.getElementById('contactInfo').value.trim()
+            };
+
+            try {
+                await fetch('/api/contacts/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                hideAddContactModal();
+                loadContacts();
+            } catch (e) {
+                alert('添加失败: ' + e);
+            }
+        }
+
+        async function showContactDetail(contactId) {
+            try {
+                const res = await fetch('/api/contact/detail?id=' + contactId);
+                const data = await res.json();
+
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                const c = data.contact;
+                document.getElementById('detailContactName').textContent = c.name;
+
+                let todosHtml = '';
+                if (c.todos && c.todos.length > 0) {
+                    todosHtml = c.todos.map(t => `
+                        <div class="todo-item">
+                            <input type="checkbox" ${t.is_completed ? 'checked' : ''} onchange="toggleTodo(${t.id}, this.checked)">
+                            <span class="${t.is_completed ? 'completed' : ''}">${t.task_content}</span>
+                            ${t.due_date ? '<span class="todo-date">' + t.due_date + '</span>' : ''}
+                            <span onclick="deleteTodo(${t.id})" style="cursor:pointer; color:#999;">&times;</span>
+                        </div>
+                    `).join('');
+                } else {
+                    todosHtml = '<p style="color:#666; font-size:13px;">暂无待办</p>';
+                }
+
+                document.getElementById('contactDetailContent').innerHTML = `
+                    <div class="detail-section">
+                        <div class="detail-label">基本信息</div>
+                        <p>性别: ${c.gender || '未设置'}</p>
+                        <p>身份: ${c.identity || '未设置'}</p>
+                        <p>生日: ${c.birthday || '未设置'}</p>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">重要备忘</div>
+                        <p>${c.important_info || '无备忘信息'}</p>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">待办事项</div>
+                        <div class="todo-list">${todosHtml}</div>
+                        <div style="margin-top:12px; display:flex; gap:8px;">
+                            <input type="text" id="newTodoText" placeholder="添加新待办..." style="flex:1; padding:8px; border:1px solid #ddd; border-radius:6px;">
+                            <input type="date" id="newTodoDate" style="padding:8px; border:1px solid #ddd; border-radius:6px;">
+                            <button class="btn btn-primary" onclick="addTodo(${c.id})">添加</button>
+                        </div>
+                    </div>
+                    <div style="margin-top:20px; text-align:right;">
+                        <button class="btn btn-danger" onclick="deleteContact(${c.id})">删除联系人</button>
+                    </div>
+                `;
+
+                document.getElementById('contactDetailModal').classList.add('active');
+            } catch (e) {
+                alert('加载失败: ' + e);
+            }
+        }
+
+        function hideContactDetailModal() {
+            document.getElementById('contactDetailModal').classList.remove('active');
+        }
+
+        async function addTodo(contactId) {
+            const text = document.getElementById('newTodoText').value.trim();
+            const dueDate = document.getElementById('newTodoDate').value;
+            if (!text) return;
+
+            await fetch('/api/todos/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contact_id: contactId, task_content: text, due_date: dueDate })
+            });
+
+            showContactDetail(contactId);
+        }
+
+        async function toggleTodo(todoId, isCompleted) {
+            await fetch('/api/todos/toggle', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ todo_id: todoId, is_completed: isCompleted })
+            });
+        }
+
+        async function deleteTodo(todoId) {
+            const contactId = document.querySelector('#contactDetailContent .btn-danger')?.onclick.toString().match(/(\d+)/)?.[1];
+            await fetch('/api/todos/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ todo_id: todoId })
+            });
+            if (contactId) showContactDetail(parseInt(contactId));
+        }
+
+        async function deleteContact(id) {
+            if (!confirm('确定删除该联系人？相关待办也会被删除。')) return;
+
+            await fetch('/api/contacts/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
+            });
+
+            hideContactDetailModal();
+            loadContacts();
+        }
+
+        // 加载信源管理页
+        async function loadSourcesPage() {
+            try {
+                const res = await fetch('/api/sources');
+                const data = await res.json();
+                const gridEl = document.getElementById('sourceGrid');
+
+                gridEl.innerHTML = data.sources.map((s, index) => {
+                    const icon = platformIcons[s.platform] || '📄';
+                    const stats = sourceStats[s.id] || { total: 0, today: 0 };
+                    return `
+                        <div class="source-card" onclick="toggleSourceHistory('${s.id}', this)">
+                            <div class="source-card-header">
+                                <div class="source-card-icon">${icon}</div>
+                                <div class="source-card-info">
+                                    <div class="source-card-name">${s.name}</div>
+                                    <div class="source-card-platform">${platformNames[s.platform] || s.platform}</div>
+                                </div>
+                            </div>
+                            <div class="source-card-stats">
+                                <div class="source-card-stat">
+                                    <div class="source-card-stat-value">${stats.total}</div>
+                                    <div class="source-card-stat-label">总文章</div>
+                                </div>
+                                <div class="source-card-stat">
+                                    <div class="source-card-stat-value">${stats.today}</div>
+                                    <div class="source-card-stat-label">今日</div>
+                                </div>
+                                <div class="source-card-stat">
+                                    <div class="source-card-stat-value">${s.enabled ? '✓' : '✗'}</div>
+                                    <div class="source-card-stat-label">状态</div>
+                                </div>
+                            </div>
+                            <div class="history-panel" id="history-${s.id}">
+                                <div class="loading" style="padding: 12px;">
+                                    <div class="loading-spinner"></div>
+                                </div>
+                            </div>
+                            <button class="expand-btn" id="btn-${s.id}">
+                                <span>查看历史</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+            } catch (e) {
+                console.error('加载信源失败:', e);
+            }
+        }
+
+        // 切换信源历史展开
+        async function toggleSourceHistory(sourceId, cardEl) {
+            const panel = document.getElementById(`history-${sourceId}`);
+            const btn = document.getElementById(`btn-${sourceId}`);
+            const isActive = panel.classList.contains('active');
+
+            if (isActive) {
+                panel.classList.remove('active');
+                btn.classList.remove('active');
+                btn.querySelector('span').textContent = '查看历史';
+                return;
+            }
+
+            document.querySelectorAll('.history-panel.active').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.expand-btn.active').forEach(b => {
+                b.classList.remove('active');
+                b.querySelector('span').textContent = '查看历史';
+            });
+
+            panel.classList.add('active');
+            btn.classList.add('active');
+            btn.querySelector('span').textContent = '收起历史';
+
+            try {
+                const res = await fetch(`/api/source/detail?id=${sourceId}`);
+                const data = await res.json();
+
+                if (data.updates && data.updates.length > 0) {
+                    panel.innerHTML = data.updates.slice(0, 5).map(u => {
+                        const date = new Date(u.published_at).toLocaleDateString('zh-CN', {
+                            month: 'short', day: 'numeric'
+                        });
+                        return `
+                            <div class="history-item">
+                                <div class="history-date">${date}</div>
+                                <div class="history-title">
+                                    <a href="${u.url}" target="_blank">${u.title}</a>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    panel.innerHTML = '<div class="empty-state" style="padding: 16px;"><p style="font-size: 12px;">暂无历史数据</p></div>';
+                }
+            } catch (e) {
+                panel.innerHTML = '<div class="empty-state" style="padding: 16px;"><p style="font-size: 12px;">加载失败</p></div>';
+            }
+        }
+
+        // 刷新数据
+        async function refreshData() {
+            const btn = document.querySelector('.btn-secondary');
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = '<div class="loading-spinner"></div> 刷新中...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/refresh');
+                const data = await res.json();
+
+                if (data.success) {
+                    await Promise.all([loadStats(), loadUpdates(), loadReminders()]);
+                    document.getElementById('lastUpdate').textContent = '刚刚';
+                }
+            } catch (e) {
+                console.error('刷新失败:', e);
+            } finally {
+                btn.innerHTML = originalContent;
+                btn.disabled = false;
+            }
+        }
+
+        // 初始化
+        async function init() {
+            updateDate();
+            initTheme();
+            await Promise.all([
+                loadStats(),
+                loadUpdates(),
+                loadReminders()
+            ]);
+        }
+
+        // 启动
+        init();
+
+        // 定时刷新
+        setInterval(() => {
+            loadUpdates();
+            loadStats();
+            loadReminders();
+        }, 5 * 60 * 1000);
+    </script>
+</body>
+</html>

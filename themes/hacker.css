@@ -1,0 +1,198 @@
+/* 黑客风主题 - 低亮度Matrix风格 */
+:root {
+    --bg-primary: #050a05;
+    --bg-secondary: #081008;
+    --bg-card: rgba(0, 15, 0, 0.85);
+    --border-color: rgba(0, 200, 100, 0.2);
+    --text-primary: #7cb987;
+    --text-secondary: #5a9a6a;
+    --text-muted: #3d6b49;
+    --accent-cyan: #4ade80;
+    --accent-purple: #22c55e;
+    --accent-pink: #10b981;
+    --accent-blue: #34d399;
+    --accent-green: #22c55e;
+    --accent-orange: #6ee7b7;
+    --accent-red: #991b1b;
+    --gradient-1: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+    --gradient-2: linear-gradient(135deg, #047857 0%, #065f46 100%);
+    --gradient-3: linear-gradient(135deg, #065f46 0%, #064e3b 100%);
+    --glass-bg: rgba(0, 10, 5, 0.7);
+    --glass-border: rgba(0, 200, 100, 0.12);
+    --font-family: 'Courier New', 'Consolas', monospace;
+    --border-radius: 4px;
+    --card-radius: 6px;
+}
+
+/* 低亮度代码雨 */
+.bg-animation::before {
+    background:
+        linear-gradient(180deg,
+            rgba(0, 200, 100, 0) 0%,
+            rgba(0, 200, 100, 0.03) 50%,
+            rgba(0, 200, 100, 0) 100%
+        );
+    animation: matrix 12s linear infinite;
+    opacity: 0.7;
+}
+
+@keyframes matrix {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+}
+
+/* 暗色网格 */
+.grid-overlay {
+    background-image:
+        linear-gradient(rgba(0, 200, 100, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 200, 100, 0.03) 1px, transparent 1px);
+    background-size: 25px 25px;
+}
+
+/* 侧边栏 - 暗色 */
+.sidebar {
+    background: #030803;
+    border-right: 1px solid rgba(0, 200, 100, 0.15);
+}
+
+.logo-icon {
+    background: #050a05 !important;
+    border: 1px solid rgba(0, 200, 100, 0.3);
+    box-shadow: 0 0 8px rgba(0, 200, 100, 0.2);
+    color: #4ade80 !important;
+}
+
+.logo-text {
+    color: #7cb987 !important;
+    -webkit-text-fill-color: #7cb987 !important;
+}
+
+.nav-item {
+    border-left: 2px solid transparent;
+    border-radius: 3px;
+}
+
+.nav-item:hover {
+    background: rgba(0, 200, 100, 0.05);
+    border-left-color: rgba(0, 200, 100, 0.3);
+}
+
+.nav-item.active {
+    background: rgba(0, 200, 100, 0.08);
+    border: 1px solid rgba(0, 200, 100, 0.2);
+    border-left: 3px solid rgba(0, 200, 100, 0.4);
+    color: #4ade80;
+    box-shadow: 0 0 8px rgba(0, 200, 100, 0.15);
+}
+
+/* 统计卡片 - 暗色终端 */
+.stat-card {
+    background: rgba(0, 8, 2, 0.9);
+    border: 1px solid rgba(0, 200, 100, 0.15);
+    border-radius: 4px;
+    position: relative;
+}
+
+.stat-card::before {
+    content: '>_';
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    color: rgba(0, 200, 100, 0.4);
+    font-size: 10px;
+}
+
+.stat-card:nth-child(1) { border-color: rgba(0, 200, 100, 0.2); }
+.stat-card:nth-child(2) { border-color: rgba(0, 200, 100, 0.18); }
+.stat-card:nth-child(3) { border-color: rgba(0, 200, 100, 0.16); }
+.stat-card:nth-child(4) { border-color: rgba(0, 200, 100, 0.14); }
+
+.stat-card .stat-icon {
+    background: transparent !important;
+    border: 1px solid rgba(0, 200, 100, 0.25);
+    color: #4ade80 !important;
+    font-family: monospace;
+    box-shadow: 0 0 5px rgba(0, 200, 100, 0.1);
+}
+
+.stat-value {
+    font-family: 'Courier New', monospace;
+    text-shadow: 0 0 5px rgba(0, 200, 100, 0.3);
+}
+
+/* 平台标识 */
+.platform-bilibili {
+    background: #050a05 !important;
+    border: 1px solid rgba(0, 200, 100, 0.3);
+    color: #4ade80;
+}
+.platform-rss {
+    background: #050a05 !important;
+    border: 1px solid rgba(0, 200, 100, 0.25);
+    color: #6ee7b7;
+}
+
+/* 按钮 - 低亮度 */
+.btn-primary {
+    background: #050a05 !important;
+    border: 1px solid rgba(0, 200, 100, 0.25);
+    color: #4ade80;
+    border-radius: 3px;
+    box-shadow: 0 0 8px rgba(0, 200, 100, 0.15);
+    text-transform: uppercase;
+}
+.btn-primary:hover {
+    background: rgba(0, 200, 100, 0.1) !important;
+    box-shadow: 0 0 12px rgba(0, 200, 100, 0.2);
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 1px solid rgba(0, 200, 100, 0.15);
+    color: #5a9a6a;
+    border-radius: 3px;
+}
+
+/* 卡片 */
+.card {
+    background: rgba(0, 8, 3, 0.85);
+    border: 1px solid rgba(0, 200, 100, 0.12);
+    border-radius: 4px;
+}
+
+.card-header {
+    border-bottom: 1px solid rgba(0, 200, 100, 0.1);
+}
+
+/* 更新项 */
+.update-item {
+    background: rgba(0, 12, 4, 0.7);
+    border: 1px solid rgba(0, 200, 100, 0.1);
+    border-left: 2px solid rgba(0, 200, 100, 0.2);
+    border-radius: 3px;
+}
+.update-item:hover {
+    background: rgba(0, 20, 8, 0.8);
+    border-color: rgba(0, 200, 100, 0.2);
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+    width: 8px;
+    background: #030803;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 200, 100, 0.2);
+    border: 1px solid #030803;
+}
+
+/* 光标闪烁效果 */
+.header-title h1::after {
+    content: '_';
+    animation: blink 1s step-end infinite;
+    color: #4ade80;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
